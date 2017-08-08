@@ -56,6 +56,10 @@ class Map extends \JBartels\WecMap\MapService\Map {
 	public  $showInfoOnLoad;
 	public  $maxAutoZoom = 15;
 	public  $static = false;
+    /**
+     * @var string The google maps api key
+     */
+	protected $apiKey = '';
 
 	// array to hold the different Icons
 	public  $icons;
@@ -80,6 +84,7 @@ class Map extends \JBartels\WecMap\MapService\Map {
 		$this->js = array();
 		$this->markers = array();
 		$this->kml = array();
+		$this->apiKey = $key;
 
 		// array to hold the different Icons
 		$this->icons = array();
@@ -206,14 +211,16 @@ class Map extends \JBartels\WecMap\MapService\Map {
 
 		// make sure we have markers to display and an API key
 		$domainmgr = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance( \JBartels\WecMap\Utility\DomainMgr::class );
-		$browserKey = $domainmgr->getBrowserKey();
+		if (empty($this->apiKey)) {
+			$this->apiKey = $domainmgr->getBrowserKey();
+		}
 
-		if ($hasThingsToDisplay && $hasHeightWidth && $browserKey ) {
+		if ($hasThingsToDisplay && $hasHeightWidth && $this->apiKey) {
 
 			// auto center and zoom if necessary
 			$this->autoCenterAndZoom();
 
-			$htmlContent .= $this->mapDiv();
+			$htmlContent = $this->mapDiv();
 
 			$get = \TYPO3\CMS\Core\Utility\GeneralUtility::_GPmerged('tx_wecmap_api');
 
@@ -225,7 +232,7 @@ class Map extends \JBartels\WecMap\MapService\Map {
 			$scheme = (\TYPO3\CMS\Core\Utility\GeneralUtility::getIndpEnv('TYPO3_SSL') ? 'https://' : 'http://');
 			// get the correct API URL
 			$apiURL = $scheme . 'maps.googleapis.com/maps/api/js?language=' . $this->lang . '&libraries=places';
-			$apiURL = $domainmgr->addKeyToUrl( $apiURL, $browserKey, false );
+			$apiURL = $domainmgr->addKeyToUrl( $apiURL, $this->apiKey, false );
 
 			if(\JBartels\WecMap\Utility\Backend::getExtConf('useOwnJS'))
 			{
@@ -323,8 +330,8 @@ class Map extends \JBartels\WecMap\MapService\Map {
 			$error = '<p>'.$this->getLL( 'error_nothingToDisplay' ).'</p>';
 		} else if (!$hasHeightWidth) {
 			$error = '<p>'.$this->getLL('error_noHeightWidth' ).'</p>';
-		} else if (!$browserKey) {
-			$error = '<p>'.$this->getLL($lang, 'error_noBrowserKey' ).'</p>';
+		} else if (!$this->apiKey) {
+			$error = '<p>'.$this->getLL('error_noBrowserKey' ).'</p>';
 		}
 		if(TYPO3_DLOG) {
 			\TYPO3\CMS\Core\Utility\GeneralUtility::devLog($this->mapName.': finished map drawing with errors', 'wec_map_api', 2);

@@ -30,6 +30,8 @@
 
 namespace JBartels\WecMap\Plugin\SimpleMap;
 
+use TYPO3\CMS\Core\Utility\GeneralUtility;
+
 /**
  * Simple frontend plugin for displaying an address on a map.
  */
@@ -145,10 +147,18 @@ class SimpleMap extends \TYPO3\CMS\Frontend\Plugin\AbstractPlugin {
 		$country     = $this->pi_getFFvalue($piFlexForm, 'country', 'default');
 		$title       = $this->pi_getFFvalue($piFlexForm, 'title', 'default');
 		$description = $this->pi_getFFvalue($piFlexForm, 'description', 'default');
+		// check the apiKeys
+		$apiKey = $this->conf['apiKey'];
+		// check if there is an api key set for the specific domain
+		if (isset($this->conf['apiKeys.']) && is_array($this->conf['apiKeys.'])) {
+			if (isset($this->conf['apiKeys.'][GeneralUtility::getIndpEnv('TYPO3_HOST_ONLY')])) {
+				$apiKey = $this->conf['apiKeys.'][GeneralUtility::getIndpEnv('TYPO3_HOST_ONLY')];
+			}
+		}
 
 		/* Create the map class and add markers to the map */
 		/** @var \JBartels\WecMap\MapService\Google\Map $map */
-		$map = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance(\JBartels\WecMap\MapService\Google\Map::class, null, $width, $height, $centerLat, $centerLong, $zoomLevel, $mapName);
+		$map = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance(\JBartels\WecMap\MapService\Google\Map::class, $apiKey, $width, $height, $centerLat, $centerLong, $zoomLevel, $mapName);
 
 		// evaluate config to see which map controls we need to show
 		if(  $mapControlSize == 'large'		// deprecated
