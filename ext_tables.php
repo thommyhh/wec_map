@@ -3,8 +3,8 @@ if (!defined ('TYPO3_MODE')) 	die ('Access denied.');
 
 if (TYPO3_MODE=='BE')    {
 	/* Add the backend modules */
-    \TYPO3\CMS\Core\Utility\ExtensionManagementUtility::addModule('tools','txwecmapM1','',\TYPO3\CMS\Core\Utility\ExtensionManagementUtility::extPath('wec_map').'Classes/Module/MapAdministration/');
-    \TYPO3\CMS\Core\Utility\ExtensionManagementUtility::addModule('tools','txwecmapM2','',\TYPO3\CMS\Core\Utility\ExtensionManagementUtility::extPath('wec_map').'Classes/Module/FEUserMap/');
+//    \TYPO3\CMS\Core\Utility\ExtensionManagementUtility::addModule('tools','txwecmapM1','',\TYPO3\CMS\Core\Utility\ExtensionManagementUtility::extPath('wec_map').'Classes/Module/MapAdministration/');
+//    \TYPO3\CMS\Core\Utility\ExtensionManagementUtility::addModule('tools','txwecmapM2','',\TYPO3\CMS\Core\Utility\ExtensionManagementUtility::extPath('wec_map').'Classes/Module/FEUserMap/');
 }
 
 /* Set up the tt_content fields for the two frontend plugins */
